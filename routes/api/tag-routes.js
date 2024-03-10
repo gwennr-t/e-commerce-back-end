@@ -43,10 +43,36 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   // update a tag's name by its `id` value
+  Tag.update(
+    {
+      name: req.body.name
+    },
+    {
+      where: {
+        id: req.params.id
+      }
+    },
+  )
+  .then((updateTag) => {
+    res.json(updateTag);
+  })
+  .catch((err) => res.json(err))
 });
 
 router.delete('/:id', (req, res) => {
   // delete on tag by its `id` value
+  try {
+    const tagData = Tag.destroy({
+      where: { id: req.params.id }
+    });
+    if (!tagData) {
+      res.status(404).json({ message: 'No tag with this id!' });
+      return;
+    }
+    res.status(200).json(tagData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
